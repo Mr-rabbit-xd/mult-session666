@@ -1,0 +1,15 @@
+{
+    "isGroup": "_This command is only for groups._",
+    "isAdmin": "_Only group admins or bot owner can use this command._",
+    "isBotAdmin": "Garfield",
+    "fromMe": "only bot use",
+    "isfromMe": "_Only bot owner can use this command._",
+    "botName": "Garfield",
+    "owner": "Diegoson",
+    "image": "https://files.catbox.moe/lq7nwm.jpg",
+    "other": {
+      "connected": "✅ Garfield bot has connected",
+      "footer": "© Garfield Bot",
+      "error": "an error occured gbot"
+    }
+  }
