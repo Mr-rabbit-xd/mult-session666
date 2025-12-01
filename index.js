@@ -6,7 +6,8 @@ import { fileURLToPath } from "url";
 import path from "path";
 import fs from "fs-extra";
 import { createBaileysConnection, logoutSession } from "./lib/connection.js";
-import { getAllSessions as dbGetAllSessions } from './lib/database/sessions.js';
+import { getAllSessions as dbGetAllSessions, getSession as dbGetSession } from './lib/database/sessions.js';
+import { restoreSelectedFiles } from './lib/auth-persist.js';
 import { generatePairingCode } from "./lib/pairing.js";
 import config from "./config.js";
 import cache from "./lib/cache.js";
@@ -66,37 +67,32 @@ async function initializeSessions() {
         const credsPath = path.join(authDir, 'creds.json');
         try {
           await fs.ensureDir(authDir);
-          // If the DB record contains a base64 auth archive, extract it (preferred)
-          if (s.creds && s.creds._auth_archive) {
-              try {
-                const os = await import('os');
-                const tar = await import('tar');
-                const tmpTar = path.join(os.tmpdir(), `auth-${number}-${Date.now()}-${process.pid}-${Math.random().toString(36).slice(2)}.tar.gz`);
-                const buf = Buffer.from(s.creds._auth_archive, 'base64');
-                await fs.writeFile(tmpTar, buf);
-                // extract the tar into the baseDir using Node tar
-                try {
-                  await tar.x({ file: tmpTar, C: baseDir });
-                } catch (e) {
-                  console.warn(`⚠️ Failed to extract auth archive for ${number}:`, e.message || e);
-                }
-                await fs.remove(tmpTar).catch(() => null);
-                // Ensure creds.json exists after extraction
+          // If DB has selected-files payload, restore them atomically
+          if (s?.creds && s.creds._selected_files) {
+            try {
+              const authDir = path.join(baseDir, number);
+              const res = await restoreSelectedFiles(number, authDir, async (num) => {
+                return await dbGetSession(num);
+              });
+              if (!res.ok) {
+                console.warn(`⚠️ [${number}] restoreSelectedFiles failed:`, res.reason);
+                // fallback: if no creds on disk, write plain creds.json
                 if (!(await fs.pathExists(credsPath)) && s.creds) {
                   const credsCopy = Object.assign({}, s.creds);
-                  delete credsCopy._auth_archive;
-                  await fs.writeJSON(credsPath, credsCopy, { spaces: 2 });
-                }
-              } catch (e) {
-                console.warn(`⚠️ Failed to materialize DB session ${number} from archive:`, e.message || e);
-                if (!(await fs.pathExists(credsPath)) && s.creds) {
-                  const credsCopy = Object.assign({}, s.creds);
-                  delete credsCopy._auth_archive;
+                  delete credsCopy._selected_files;
                   await fs.writeJSON(credsPath, credsCopy, { spaces: 2 });
                 }
               }
+            } catch (e) {
+              console.warn(`⚠️ Failed to materialize DB session ${number} to disk:`, e.message || e);
+              if (!(await fs.pathExists(credsPath)) && s.creds) {
+                const credsCopy = Object.assign({}, s.creds);
+                delete credsCopy._selected_files;
+                await fs.writeJSON(credsPath, credsCopy, { spaces: 2 });
+              }
+            }
           } else {
-            // If creds.json missing, write creds from DB (no archive available)
+            // legacy fallback: write creds.json if missing
             if (!(await fs.pathExists(credsPath)) && s.creds) {
               await fs.writeJSON(credsPath, s.creds, { spaces: 2 });
             }
