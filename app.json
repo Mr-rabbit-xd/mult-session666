@@ -17,9 +17,10 @@
   },
 
   "formation": {
-    "web": {
+    "worker": {
       "quantity": 1,
-      "size": "basic"
+      "size": "basic",
+      "command": "npm start"
     }
   },
 
@@ -29,5 +30,9 @@
     {
       "url": "heroku/nodejs"
     }
-  ]
+  ],
+
+  "engines": {
+    "node": ">=22.x"
+  }
 }
