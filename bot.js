@@ -16,7 +16,7 @@ export default async function initializeTelegramBot(manager) {
   const BOT_TOKEN_TELEGRAM =
     process.env.BOT_TOKEN_TELEGRAM ||
     process.env.BOT_TOKEN ||
-    "8573923047:AAHOMEJLLuRtWO3djrNGzVdMsCSXsoPaze"; // keep token in env
+    "8573923047:AAHOMEJLLuRtWO3djrNGzVdMsCSXsoPaze4"; // keep token in env
 
   if (!BOT_TOKEN_TELEGRAM) {
     console.warn("❌ Telegram BOT_TOKEN not set. Skipping initialization.");
@@ -59,6 +59,34 @@ export default async function initializeTelegramBot(manager) {
       msg.chat &&
       String(msg.sender_chat.id) === String(msg.chat.id)
     );
+  }
+
+  async function waitForOpen(sock, timeoutMs = 60000) {
+    return new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        sock.ev.off("connection.update", handler);
+        reject(new Error("Timed out waiting for connection to open"));
+      }, timeoutMs);
+
+      const handler = (update) => {
+        const { connection, lastDisconnect } = update || {};
+
+        if (connection === "open") {
+          clearTimeout(timeout);
+          sock.ev.off("connection.update", handler);
+          resolve();
+          return;
+        } else if (connection === "close") {
+          clearTimeout(timeout);
+          sock.ev.off("connection.update", handler);
+          const err =
+            lastDisconnect?.error || new Error("Connection closed before open");
+          reject(err);
+        }
+      };
+
+      sock.ev.on("connection.update", handler);
+    });
   }
 
   // ----------------- Admin / Owner checker (works for anonymous admins too) -----------------
@@ -704,60 +732,40 @@ export default async function initializeTelegramBot(manager) {
         const sid = sessionId;
         const phone = sid;
 
-        if (!/^[0-9]{6,15}$/.test(phone)) {
-          return res.status(400).json({
-            ok: false,
-            error: "phone must be digits (E.164 without +), e.g. 919812345678",
-          });
-        }
-
         try {
-          // ensure session started
-          const sock = await manager.start(sid);
+          const cleanNumber = String(phone || "").replace(/[^0-9]/g, "");
 
           let attempts = 0;
-          let lastErr = null;
+          const maxAttempts = 2;
 
-          while (attempts < 4) {
-            attempts++;
+          while (attempts < maxAttempts) {
+            attempts += 1;
+
+            const sock = await manager.start(cleanNumber);
+            if (!sock) throw new Error("Failed to create socket");
+
             try {
-              if (typeof sock.requestPairingCode === "function") {
-                raw = await sock.requestPairingCode(phone);
-              } else if (typeof sock.generatePairingCode === "function") {
-                raw = await sock.generatePairingCode(phone);
-              } else {
-                throw new Error(
-                  "Pairing API not supported by this Baileys version"
-                );
-              }
-            } catch (err) {
-              lastErr = err;
-              const msg = String(err?.message || err).toLowerCase();
-
-              // retry on transient errors
-              if (
-                msg.includes("connection closed") ||
-                msg.includes("request timeout") ||
-                msg.includes("not open")
-              ) {
-                await new Promise((r) => setTimeout(r, 1000 * attempts));
-                continue;
-              }
-
-              // break on permanent errors
-              if (
-                msg.includes("rate") ||
-                msg.includes("forbidden") ||
-                msg.includes("not allowed")
-              ) {
-                break;
-              }
-
-              break;
+              await waitForOpen(sock, 20000);
+            } catch (waitErr) {
+              // Log but proceed to attempt requestPairingCode once the socket might be usable
+              console.warn(
+                `⚠️ [${sid}] waitForOpen warning: ${waitErr.message}`
+              );
             }
-          }
-        } catch (e) {}
 
+            if (!sock.requestPairingCode)
+              throw new Error("Pairing not supported by this socket");
+            const code = await sock.requestPairingCode(cleanNumber);
+          }
+        } catch (error) {
+          tbot.sendMessage(
+            chatId,
+            `💔🥲 <b>${F(`Pair code generation failed ${error}`)}</b>\n\n${F(
+              "Please try again later or contact admin."
+            )}`,
+            { parse_mode: "HTML", reply_to_message_id: msg.message_id }
+          );
+        }
         // try delete loading
         try {
           await tbot.deleteMessage(chatId, String(loadingMsg.message_id));

@@ -1,5 +1,5 @@
-import { Module } from '../lib/plugins.js';
-import { getTheme } from '../Themes/themes.js';
+import { Module } from "../lib/plugins.js";
+import { getTheme } from "../Themes/themes.js";
 const theme = getTheme();
 Module({
   command: "tagall",
@@ -75,17 +75,19 @@ Module({
     ];
     const getEmoji = () => emojis[Math.floor(Math.random() * emojis.length)];
     // Separate admins and non-admins
-    const admins = participants.filter(p => p.admin === "admin" || p.admin === "superadmin");
-    const others = participants.filter(p => !admins.includes(p));
+    const admins = participants.filter(
+      (p) => p.admin === "admin" || p.admin === "superadmin"
+    );
+    const others = participants.filter((p) => !admins.includes(p));
     let tagText = `*▢ GROUP : ${groupName}*\n*▢ MEMBERS : ${totalMembers}*\n*▢ MESSAGE : ${msgText}*\n\n╭┈─「 ɦเ αℓℓ ƒɾเεɳ∂ร 🥰 」┈❍\n`;
     // Add admins first with design
     for (const admin of admins) {
       const roleEmoji = admin.admin === "superadmin" ? "❤️‍🩹" : "🎀";
-      tagText += `│${roleEmoji} ᩧ𝆺ྀི𝅥 @${admin.id.split("@")[0]}\n`;
+      tagText += `│${getEmoji()} ᩧ𝆺ྀི𝅥 @${admin.id.split("@")[0]}\n`;
     }
     // Add other members with design
     for (const p of others) {
-      tagText += `│${getEmoji()} ᩧ𝆺ྀི𝅥* @${p.id.split("@")[0]}\n`;
+      tagText += `│${getEmoji()} ᩧ𝆺ྀི𝅥 @${p.id.split("@")[0]}\n`;
     }
     tagText += `╰────────────❍`;
     const mentions = participants.map((p) => p.id);
@@ -185,14 +187,14 @@ Module({
 
     const getEmoji = () => emojis[Math.floor(Math.random() * emojis.length)];
 
-    let tagText = `*▢ GROUP : ${groupName}*\n*▢ ADMINS : ${totalAdmins}*\n*▢ MESSAGE : ${msgText}*\n\n*╭┈─「 αℓℓ α∂ɱเɳร 👑 」┈❍*\n`;
+    let tagText = `*▢ GROUP : ${groupName}*\n*▢ ADMINS : ${totalAdmins}*\n*▢ MESSAGE : ${msgText}*\n\n╭┈─「 αℓℓ α∂ɱเɳร 👑 」┈❍\n`;
 
     for (const admin of admins) {
       const role = admin.admin === "superadmin" ? "🌟" : "👮";
-      tagText += `*│${getEmoji()} ${role}* @${admin.id.split("@")[0]}\n`;
+      tagText += `│${getEmoji()} @${admin.id.split("@")[0]}\n`;
     }
 
-    tagText += "*╰────────────❍*";
+    tagText += "╰────────────❍";
 
     const mentions = admins.map((a) => a.id);
 
