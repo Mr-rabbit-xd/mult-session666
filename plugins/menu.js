@@ -33,6 +33,7 @@ Module({
   description: "Show all commands or a specific package",
 })(async (message, match) => {
   try {
+    await message.react("📜");
     const time = new Date().toLocaleTimeString("en-ZA", {
       timeZone: "Africa/Johannesburg",
     });
