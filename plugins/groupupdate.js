@@ -2,7 +2,7 @@
 import { Module } from "../lib/plugins.js";
 import { db } from "../lib/client.js";
 import axios from "axios";
-import { jidNormalizedUser } from "baileys";
+import { jidNormalizedUser } from "@whiskeysockets/baileys";
 
 const DEFAULT_GOODBYE = `🫀⃝⃪⃔⃕🫵🏻 &mention 🥺💔🌸
 *𓂋⃝⃟⃟⃝⃪⃔ Goodbye from!*  &name
