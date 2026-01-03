@@ -7,7 +7,7 @@ import { fileURLToPath } from "url";
 import initializeTelegramBot from "./bot.js";
 import { forceLoadPlugins } from "./lib/plugins.js";
 //import { createSockAndStart, attachHandlersToSock } from "./lib/client.js";
-
+import eventlogger from "./lib/handier.js";
 import { manager, main, db } from "./lib/client.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -158,7 +158,7 @@ const PORT = process.env.PORT || 3000;
 
     app.listen(PORT, async () => {
       console.log(`Server listening on ${PORT}`);
-
+     eventlogger()
       // start all sessions that were registered in meta (staggered by SessionManager)
       try {
         await manager.startAll();

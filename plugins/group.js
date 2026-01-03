@@ -3,11 +3,6 @@ import { getTheme } from "../Themes/themes.js";
 const theme = getTheme();
 
 // ==================== HELPER FUNCTIONS ====================
-
-/**
- * Extract JID from message (mentions, quoted, or number)
- * ✅ FIXED: Enhanced LID/PN support with better extraction
- */
 const extractJid = (message) => {
   // Check quoted message first
   if (message.quoted?.participant) return message.quoted.participant;
@@ -39,27 +34,27 @@ const checkPermissions = async (message) => {
 
     if (!message.isGroup) {
       await message.send(
-        theme.isGroup || "❌ _This command is only for groups_"
+        theme.isGroup || "_This command is only for groups_"
       );
       return false;
     }
 
     if (!message.isAdmin && !message.isfromMe) {
       await message.send(
-        theme.isAdmin || "❌ _This command requires admin privileges_"
+        theme.isAdmin || " _This command requires admin privileges_"
       );
       return false;
     }
 
     if (!message.isBotAdmin) {
-      await message.send(theme.isBotAdmin || "❌ _Bot needs admin privileges_");
+      await message.send(theme.isBotAdmin || "_Bot needs admin privileges_");
       return false;
     }
 
     return true;
   } catch (error) {
     console.error("Permission check error:", error);
-    await message.send("❌ _Failed to check permissions_");
+    await message.send("_Failed to check permissions_");
     return false;
   }
 };

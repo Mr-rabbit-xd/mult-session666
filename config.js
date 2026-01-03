@@ -33,8 +33,8 @@ export default {
   prefix: process.env.PREFIX || ".",
   owner: process.env.OWNER_NUMBER || "917074029156",
   sudo: process.env.SUDO || "917074029156",
-  packname: process.env.PACKNAME || "ɠαɾϝιҽʅɗ",
-  author: process.env.AUTHOR || "ɳαxσɾ",
+  packname: process.env.PACKNAME || "bot",
+  author: process.env.AUTHOR || "x-kira",
   SESSION_ID: process.env.SESSION_ID || "",
   THEME: process.env.THEME || "t",
   maxFileSize: parseInt(process.env.MAX_FILE_SIZE, 10) || 100 * 1024 * 1024, // 100MB default

@@ -8,9 +8,6 @@ Module({
 })(async (m, text) => {
   if (!m.isGroup) return m.send(theme.isGroup);
   await m.loadGroupInfo();
-  if (!m.isAdmin && !m.isFromMe) {
-    return m.send(theme.isAdmin);
-  }
   try {
     const conn = m.conn;
     const from = m.from;
@@ -80,12 +77,7 @@ Module({
     );
     const others = participants.filter((p) => !admins.includes(p));
     let tagText = `*▢ GROUP : ${groupName}*\n*▢ MEMBERS : ${totalMembers}*\n*▢ MESSAGE : ${msgText}*\n\n╭┈─「 ɦเ αℓℓ ƒɾเεɳ∂ร 🥰 」┈❍\n`;
-    // Add admins first with design
-    for (const admin of admins) {
-      const roleEmoji = admin.admin === "superadmin" ? "❤️‍🩹" : "🎀";
-      tagText += `│${getEmoji()} ᩧ𝆺ྀི𝅥 @${admin.id.split("@")[0]}\n`;
-    }
-    // Add other members with design
+ 
     for (const p of others) {
       tagText += `│${getEmoji()} ᩧ𝆺ྀི𝅥 @${p.id.split("@")[0]}\n`;
     }
@@ -213,7 +205,7 @@ Module({
 });
 
 Module({
-  command: "randomtag",
+  command: "rtag",
   package: "group",
   description: "Tag random members",
 })(async (m, text) => {

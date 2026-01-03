@@ -158,7 +158,7 @@ async function sendReactionGif(message, reactionType) {
     } else if (message.isGroup) {
       caption = `${sender} ${reactionType.action} everyone!`;
     } else {
-      caption = "> *© ᴘσωєʀє∂ ву `kira 𝙼ԃ`⎯꯭̽💀*";
+      caption = "";
     }
 
     // Fetch and send GIF

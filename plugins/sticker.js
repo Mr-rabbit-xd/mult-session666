@@ -9,12 +9,11 @@ Module({
 })(async (message, match) => {
   let mediaa = message.quoted || message;
   if (mediaa.type !== 'stickerMessage') return await message.send('_Reply to a sticker_');
-  const [packname, author] = match?.split('|').map(s => s.trim()) || [];
-  if (!packname || !author) return await message.send('_use: take new pack | new author_');
+  const packname = match;
+  if (!match) return await message.send('_use: .take my name_');
   const media = await mediaa.download();
   const buffer = await sticker.addExif(media, {
     packname,
-    author
   });
 
   await message.send({ sticker: buffer });

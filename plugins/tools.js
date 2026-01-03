@@ -232,7 +232,7 @@ Module({
     }\n\nUse:\n• autoread on\n• autoread off`
   );
 });
-
+/*
 // 🔹 Save Status
 Module({
   command: "savestatus",
@@ -268,3 +268,4 @@ Module({
     }\n\nUse:\n• savestatus on\n• savestatus off`
   );
 });
+*/
