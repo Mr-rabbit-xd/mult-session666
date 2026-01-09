@@ -44,70 +44,73 @@ Module({
     const ram = `${usedGB} / ${totGB} GB`;
 
     // Build grouped commands
-    const grouped = buildGroupedCommands();
-    const categories = Object.keys(grouped).sort();
-    let _cmd_st = "";
+  const grouped = buildGroupedCommands();
+const categories = Object.keys(grouped).sort();
+let _cmd_st = "";
 
-    if (match && grouped[match.toLowerCase()]) {
-      const pack = match.toLowerCase();
-      _cmd_st += `\n *╭────❒ ${pack.toUpperCase()} ❒⁠⁠⁠⁠*\n`;
-      grouped[pack]
+if (match && grouped[match.toLowerCase()]) {
+  const pack = match.toLowerCase();
+  _cmd_st += `\n *╭────❒ ${pack.toUpperCase()} ❒*\n`;
+  grouped[pack]
+    .sort((a, b) => a.localeCompare(b))
+    .forEach((cmdName) => {
+      _cmd_st += ` *├◈ ${cmdName}*\n`;
+    });
+  _cmd_st += ` *┕──────────────────❒*\n`;
+} else {
+  _cmd_st += `
+╔〔 🧚‍♀️*Rᴀʙʙɪᴛ Xᴍᴅ Mɪɴɪ*💐〕╗
+ *👋 Hᴇʟʟᴏ, Rᴀʙʙɪᴛ Xᴍᴅ Mɪɴɪ Usᴇʀ!*
+╚══════════════════════╝
+
+╭─「 *Cᴏᴍᴍᴀɴᴅ Pᴀɴᴇʟ* 」
+│🔹 *𝐎ᴡɴᴇʀ*    : 𝐌ʀ 𝐑ᴀʙʙɪᴛ
+│🔹 *Rᴜɴ*     : ${runtime(process.uptime())}
+│🔹 *Mᴏᴅᴇ*    : Pᴜʙʟɪᴄ
+│🔹 *Pʀᴇғɪx*  : ${config.prefix}
+│🔹 *Rᴀᴍ*     : ${ram}
+│🔹 *Tɪᴍᴇ*    : ${time}
+│🔹 *Uѕᴇʀ*    : ${userName}
+╰─────────────●●►
+${readMore}
+`;
+
+  if (match && !grouped[match.toLowerCase()]) {
+    _cmd_st += `\n⚠️ *Pᴀᴄᴋᴀɢᴇ Nᴏᴛ Fᴏᴜɴᴅ : ${match}*\n\n`;
+    _cmd_st += `*Aᴠᴀɪʟᴀʙʟᴇ Pᴀᴄᴋᴀɢᴇs* :\n`;
+    categories.forEach((cat) => {
+      _cmd_st += `├◈ ${cat}\n`;
+    });
+  } else {
+    for (const cat of categories) {
+      _cmd_st += `\n *╭────❒ ${cat.toUpperCase()} ❒*\n`;
+      grouped[cat]
         .sort((a, b) => a.localeCompare(b))
         .forEach((cmdName) => {
           _cmd_st += ` *├◈ ${cmdName}*\n`;
         });
       _cmd_st += ` *┕──────────────────❒*\n`;
-    } else {
-      _cmd_st += `
-*╭══〘〘 ${name} 〙〙*
-*┃❍ ʀᴜɴ     :* ${runtime(process.uptime())}
-*┃❍ ᴍᴏᴅᴇ    :* Public
-*┃❍ ᴘʀᴇғɪx  :* ${config.prefix}
-*┃❍ ʀᴀᴍ     :* ${ram}
-*┃❍ ᴛɪᴍᴇ    :* ${time}
-*┃❍ ᴜsᴇʀ    :* ${userName}
-*┃❍ ᴘᴀɪʀ   :* https://x-kira-bot-pair.vercel.app
-*╰═════════════════⊷*
-${readMore}
-*♡︎•━━━━━━☻︎━━━━━━•♡︎*
-`;
-      if (match && !grouped[match.toLowerCase()]) {
-        _cmd_st += `\n⚠️ *Package not found: ${match}*\n\n`;
-        _cmd_st += `*Available Packages*:\n`;
-        categories.forEach((cat) => {
-          _cmd_st += `├◈ ${cat}\n`;
-        });
-      } else {
-        for (const cat of categories) {
-          _cmd_st += `\n *╭────❒ ${cat.toUpperCase()} ❒⁠⁠⁠⁠*\n`;
-          grouped[cat]
-            .sort((a, b) => a.localeCompare(b))
-            .forEach((cmdName) => {
-              _cmd_st += ` *├◈ ${cmdName}*\n`;
-            });
-          _cmd_st += ` *┕──────────────────❒*\n`;
-        }
-      }
-      _cmd_st += `\n💖 *~_Made with love by X-kira_~*`;
     }
+  }
 
-    const channelJid = "120363400835083687@newsletter";
-    const channelName = "© X-kira";
-    const serverMessageId = 6;
-    const opts = {
-      image: { url: getRandomPhoto() || "https://files.catbox.moe/n9ectm.jpg" },
-      caption: _cmd_st,
-      mimetype: "image/jpeg",
-      contextInfo: {
-        forwardingScore: 999,
-        isForwarded: true,
-        forwardedNewsletterMessageInfo: {
-          newsletterJid: channelJid,
-          newsletterName: channelName,
-          serverMessageId: serverMessageId,
-        },
-      },
-    };
+  _cmd_st += `\n *💐 𝐓ʜᴀɴᴋ 𝐘ᴏᴜ 𝐅ᴏʀ 𝐔sɪɴɢ 𝐑ᴀʙʙɪᴛ Xᴍᴅ 𝐁ᴏᴛ 💞*`;
+}
+
+const opts = {
+  image: { url: getRandomPhoto() || "https://www.rabbit.zone.id/pzf1km.jpg" },
+  caption: _cmd_st,
+  mimetype: "image/jpeg",
+  contextInfo: {
+    forwardingScore: 999,
+    isForwarded: true,
+    forwardedNewsletterMessageInfo: {
+      newsletterJid: "120363404737630340@newsletter",
+      newsletterName: "𝐑ᴀʙʙɪᴛ Xᴍᴅ",
+      serverMessageId: 6,
+    },
+  },
+};
+
 
     // sendMessage: (jid, message) where message is an object like { image: {url}, caption, ... }
     await message.conn.sendMessage(message.from, opts);
