@@ -30,10 +30,10 @@ const AUTH_DIR =
 // Export config
 export default {
   prefix: process.env.PREFIX || ".",
-  owner: process.env.OWNER_NUMBER || "917074029156",
-  sudo: process.env.SUDO || "917074029156",
-  packname: process.env.PACKNAME || "bot",
-  author: process.env.AUTHOR || "x-kira",
+  owner: process.env.OWNER_NUMBER || "919874188403",
+  sudo: process.env.SUDO || "919874188403",
+  packname: process.env.PACKNAME || "Xᴍᴅ",
+  author: process.env.AUTHOR || "Rᴀʙʙɪᴛ",
   SESSION_ID: process.env.SESSION_ID || "",
   THEME: process.env.THEME || "t",
   maxFileSize: parseInt(process.env.MAX_FILE_SIZE, 10) || 100 * 1024 * 1024, // 100MB default
