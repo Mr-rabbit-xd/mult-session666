@@ -23,7 +23,17 @@
 
 export default async function initializeTelegramBot(manager) {
   // === CONFIG ===
-  const ALLOWED_GROUP_ID = -1003616233972; // allowed group id
+
+const ALLOWED_GROUP_IDS = [
+  -5120090744,
+  -1002270479071,
+ --5120090744
+  // future এ চাইলে নিচে শুধু ID add করলেই হবে
+  // -1002222333344,
+  // -1003333444455,
+];
+
+ 
   const GROUP_INVITE_LINK = "https://t.me/+TH6JSRmI9CUzMzhl";
 
   // Token MUST come from env
@@ -379,13 +389,13 @@ export default async function initializeTelegramBot(manager) {
   }
 
   function isAllowedGroup(msg) {
-    try {
-      if (!msg || !msg.chat) return false;
-      if (msg.chat.type === "private") return false;
-      return String(msg.chat.id) === String(ALLOWED_GROUP_ID);
-    } catch (e) {
-      return false;
-    }
+  try {
+    if (!msg || !msg.chat) return false;
+    if (msg.chat.type === "private") return false;
+    return ALLOWED_GROUP_IDS.includes(Number(msg.chat.id));
+  } catch (e) {
+    return false;
+  }
   }
 
   // Logging every message (helpful)
