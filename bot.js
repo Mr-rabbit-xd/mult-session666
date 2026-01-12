@@ -26,7 +26,7 @@ export default async function initializeTelegramBot(manager) {
 
 const ALLOWED_GROUP_IDS = [
   -1003616233972,
-  -1001234567890,
+  -5120090744,
 ];
 
  
@@ -384,7 +384,8 @@ const ALLOWED_GROUP_IDS = [
     return msg && msg.chat && msg.chat.type === "private";
   }
 
-  function isAllowedGroup(msg) {
+
+ function isAllowedGroup(msg) {
   try {
     if (!msg || !msg.chat) return false;
     if (msg.chat.type === "private") return false;
@@ -392,7 +393,7 @@ const ALLOWED_GROUP_IDS = [
   } catch (e) {
     return false;
   }
-  }
+ }
 
   // Logging every message (helpful)
   tbot.on("message", (msg) => {
@@ -413,7 +414,15 @@ const ALLOWED_GROUP_IDS = [
       if (!msg || !msg.new_chat_members) return;
       const botId = tbot.botId;
       if (!botId) return;
-      const addedBot = msg.new_chat_members.some((m) => m.id === botId);
+      consfunction isAllowedGroup(msg) {
+  try {
+    if (!msg || !msg.chat) return false;
+    if (msg.chat.type === "private") return false;
+    return ALLOWED_GROUP_IDS.includes(Number(msg.chat.id));
+  } catch (e) {
+    return false;
+  }
+      }t addedBot = msg.new_chat_members.some((m) => m.id === botId);
       if (!addedBot) return;
       console.log("➕ Bot added to group:", msg.chat.id);
       if (!isAllowedGroup(msg)) {
