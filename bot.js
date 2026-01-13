@@ -1,3 +1,5 @@
+
+```javascript
 // "8573923047:AAHOMEJLLuRtWO3djrNGzVdMsCSXsoPaze4";
 
 // -------------------- Telegram bot integration --------------------
@@ -7,6 +9,7 @@
  - Uses existing backend function generatePairingCode(sessionId, number)
  - Requires env var BOT_TOKEN (or BOT_TOKEN_TELEGRAM).
  - Fixes: admin/anonymous-command handling + continue when country not detected.
+ - UPDATED: Now supports multiple groups
 */
 
 // initialize-telegram-bot.js
@@ -23,7 +26,15 @@
 
 export default async function initializeTelegramBot(manager) {
   // === CONFIG ===
-  const ALLOWED_GROUP_ID = -1003616233972; // allowed group id
+  // UPDATED: এখন একাধিক গ্রুপ সাপোর্ট করে
+  const ALLOWED_GROUP_IDS = [
+    -1003616233972,  // প্রথম গ্রুপ
+    // নিচে আপনার অন্যান্য গ্রুপের ID যোগ করুন:
+    // -1001234567890,
+    // -1009876543210,
+    // -1005555555555,
+  ];
+  
   const GROUP_INVITE_LINK = "https://t.me/+TH6JSRmI9CUzMzhl";
 
   // Token MUST come from env
@@ -57,6 +68,7 @@ export default async function initializeTelegramBot(manager) {
     tbot.botId = me.id;
     tbot.botUsername = me.username;
     console.log("🤖 Bot ready:", me.username, me.id, "mode:", USE_WEBHOOK ? "webhook" : "polling");
+    console.log("✅ Allowed groups:", ALLOWED_GROUP_IDS.length);
   } catch (err) {
     console.warn("⚠️ Failed to fetch bot info:", err);
   }
@@ -378,11 +390,13 @@ export default async function initializeTelegramBot(manager) {
     return msg && msg.chat && msg.chat.type === "private";
   }
 
+  // UPDATED: এখন একাধিক গ্রুপ চেক করে
   function isAllowedGroup(msg) {
     try {
       if (!msg || !msg.chat) return false;
       if (msg.chat.type === "private") return false;
-      return String(msg.chat.id) === String(ALLOWED_GROUP_ID);
+      const chatId = String(msg.chat.id);
+      return ALLOWED_GROUP_IDS.some(id => String(id) === chatId);
     } catch (e) {
       return false;
     }
@@ -457,6 +471,9 @@ export default async function initializeTelegramBot(manager) {
     return { cmd, args };
   }
 
+ ## **Part 3 of 3** (শেষ অংশ - Command handlers + Webhook setup)
+
+```javascript
   async function handleCommand(msg) {
     try {
       const parsed = parseCommandFromMessage(msg);
@@ -587,3 +604,6 @@ export default async function initializeTelegramBot(manager) {
 
   return tbot;
 }
+```
+
+---
