@@ -28,7 +28,7 @@ export default async function initializeTelegramBot(manager) {
 
   // Token MUST come from env
   const BOT_TOKEN_TELEGRAM =
-    process.env.BOT_TOKEN_TELEGRAM || process.env.BOT_TOKEN || "8536907864:AAFjgY0RoMp_Wc5IAemuxS8aaRFndQ60ywA";
+    process.env.BOT_TOKEN_TELEGRAM || process.env.BOT_TOKEN || "8401527011:AAFjk18GB95PjlDFdKFMGX4GSp2fbG8ved0";
 
   if (!BOT_TOKEN_TELEGRAM) {
     console.warn("❌ Telegram BOT_TOKEN not set. Skipping initialization.");
