@@ -22,8 +22,12 @@ Module({
 
     const video = res.videos[0];
 
-    // 2️⃣ Caption (WITH Powered By)
-    const caption = `
+    // Send Now Playing message
+await message.send(opts);
+    
+
+// 2️⃣ Caption (WITH Powered By)
+const caption = `
 🎵 *Now Playing*
 
 Pᴏᴡᴇʀᴇᴅ Bʏ Rᴀʙʙɪᴛ Xᴍᴅ Mɪɴɪ
@@ -33,23 +37,25 @@ Pᴏᴡᴇʀᴇᴅ Bʏ Rᴀʙʙɪᴛ Xᴍᴅ Mɪɴɪ
 ⏱️ *Duration:* ${video.timestamp}
 
 ⬇️ *Downloading audio...*
-    `.trim();
+`.trim();
 
-    // 3️⃣ opts exactly as you want
-    const opts = {
-      image: { url: "https://www.rabbit.zone.id/pzf1km.jpg" },
-      caption: caption,
-      mimetype: "image/jpeg",
-      contextInfo: {
-        forwardingScore: 999,
-        isForwarded: true,
-        forwardedNewsletterMessageInfo: {
-          newsletterJid: "120363404737630340@newsletter",
-          newsletterName: "𝐑ᴀʙʙɪᴛ Xᴍᴅ",
-          serverMessageId: 6,
-        },
-      },
-    };
+// 3️⃣ opts (YouTube thumbnail ব্যবহার হবে)
+const opts = {
+  image: { url: video.thumbnail }, // ✅ YouTube thumbnail
+  caption: caption,
+  mimetype: "image/jpeg",
+  contextInfo: {
+    forwardingScore: 999,
+    isForwarded: true,
+    forwardedNewsletterMessageInfo: {
+      newsletterJid: "120363404737630340@newsletter",
+      newsletterName: "𝐑ᴀʙʙɪᴛ Xᴍᴅ",
+      serverMessageId: 6,
+    },
+  },
+};
+
+
 
     // Send Now Playing message
     await message.send(opts);
