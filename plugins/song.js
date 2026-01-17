@@ -316,7 +316,7 @@ Module({
 });
 /* ----------------- PLAY (MP3) ----------------- */
 Module({
-  command: "play",
+  command: "plaky",
   package: "downloader",
   description:
     "Download YouTube song using multiple APIs (PrivateZia / Zen / Finix)",
