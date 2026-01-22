@@ -1,10 +1,17 @@
 import axios from "axios";
 import { Module } from "../lib/plugins.js";
 
+/* 🔥 API WARM-UP (Render Free sleep prevent) */
+setInterval(() => {
+  axios
+    .get("https://duxx-zx-osint-api.onrender.com/")
+    .catch(() => {});
+}, 5 * 60 * 1000); // every 5 minutes
+
 Module({
-  command: "lookup",
+  command: ["lookup"],
   package: "tools",
-  description: "Lookup mobile number details"
+  description: "Lookup number details"
 })(async (message, match) => {
 
   if (!match) {
@@ -17,47 +24,59 @@ Module({
     return message.send("❌ Valid mobile number dao");
   }
 
-  await message.react("🔍");
+  // ⏳ Please wait message
+  const waitMsg = await message.send("⏳ Fetching data, please wait...");
+  await message.react("⏳");
+
+  const url =
+    "https://duxx-zx-osint-api.onrender.com/api" +
+    `?key=Rabbit&type=mobile&term=${encodeURIComponent(match)}`;
 
   try {
-    const url = `https://duxx-zx-osint-api.onrender.com/api?key=Rabbit&type=mobile&term=${match}`;
-    const res = await axios.get(url);
+    let res;
 
-    if (
-      !res.data.success ||
-      !res.data.result?.result ||
-      res.data.result.result.length === 0
-    ) {
-      await message.react("❌");
-      return message.send("❌ Kono data paoa jay nai");
+    // 🔁 Retry system (slow API safe)
+    for (let i = 1; i <= 3; i++) {
+      try {
+        res = await axios.get(url, {
+          timeout: 30000, // 30s for Render free
+          headers: {
+            "User-Agent": "Mozilla/5.0"
+          }
+        });
+        break;
+      } catch (e) {
+        if (i === 3) throw e;
+        await new Promise(r => setTimeout(r, 2000));
+      }
     }
 
-    const d = res.data.result.result[0];
+    const api = res.data;
 
-    const text = `
-📱 *Mobile Number Details*
+    if (!api?.result?.result || api.result.result.length === 0) {
+      await message.react("❌");
+      return message.send("❌ Data paoa jay nai");
+    }
 
-• Name: ${d.name || "N/A"}
-• Father: ${d.father_name || "N/A"}
-• Mobile: ${d.mobile}
-• Alt Mobile: ${d.alt_mobile || "N/A"}
-• Circle: ${d.circle || "N/A"}
-• ID Number: ${d.id_number || "N/A"}
-• Email: ${d.email || "N/A"}
-
-🏠 *Address*
-${d.address || "N/A"}
+    // 🟢 Only result send
+    const resultText = `
+${JSON.stringify(api.result.result, null, 2)}
 
 ━━━━━━━━━━━━━━
-✨ *Pᴏᴡᴇʀᴇᴅ Bʏ Mʀ Rᴀʙʙɪᴛ*
+✨ Pᴏᴡᴇʀᴇᴅ Bʏ Mʀ Rᴀʙʙɪᴛ
 `;
 
-    await message.send(text);
+    await message.send(resultText);
     await message.react("✅");
 
-  } catch (e) {
-    console.error(e);
+    // 🧹 delete wait message
+    try {
+      await message.delete(waitMsg.key);
+    } catch {}
+
+  } catch (err) {
+    console.error("LOOKUP ERROR:", err?.message);
     await message.react("❌");
-    message.send("⚠️ Server error, try again later");
+    message.send("⚠️ API slow / unavailable. Try again.");
   }
 });
