@@ -107,9 +107,7 @@ async function ytSearch(query, max = 10) {
   }));
 }
 async function downloadYtAudio(query) {
-  const apiUrl = `https://api.privatezia.biz.id/api/downloader/ytplaymp3?query=${encodeURIComponent(
-    query
-  )}`;
+  const apiUrl = `https://apis.davidcyril.name.ng/play?query=${encodeURIComponent(query)}&apikey=`;
   const response = await axios.get(apiUrl);
 
   if (!response.data || !response.data.status) {
