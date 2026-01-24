@@ -14,7 +14,6 @@ Module({
 
     await message.react("⌛");
 
-    // Extract WhatsApp link
     const linkMatch = match.match(
       /https?:\/\/(chat\.whatsapp\.com|whatsapp\.com\/channel)\/[^\s]+/i
     );
@@ -34,15 +33,31 @@ Module({
       const id = res.id;
 
       await message.react("✅");
-      return message.send(`
-📊 *Group Link Analysis*
 
-🔗 *Link:* ${link}
-🆔 *Group ID:*
-\`${id}\`
-
-_Powered By Rabbit Xmd Mini_
-`.trim());
+      return message.client.sendMessage(message.chat, {
+        interactiveMessage: {
+          header: {
+            title: "📊 Group Link Analysis",
+          },
+          body: {
+            text:
+              `🔗 Link:\n${link}\n\n` +
+              `🆔 Group ID:\n\`${id}\``,
+          },
+          footer: {
+            text: "Powered By Rabbit Xmd Mini",
+          },
+          buttons: [
+            {
+              name: "cta_copy",
+              buttonParamsJson: JSON.stringify({
+                display_text: "📋 Copy Group ID",
+                copy_code: id,
+              }),
+            },
+          ],
+        },
+      });
     }
 
     // ================= CHANNEL =================
@@ -56,15 +71,31 @@ _Powered By Rabbit Xmd Mini_
       const id = res.id;
 
       await message.react("✅");
-      return message.send(`
-📢 *Channel Link Analysis*
 
-🔗 *Link:* ${link}
-🆔 *Channel ID:*
-\`${id}\`
-
-_Powered By Rabbit Xmd Mini_
-`.trim());
+      return message.client.sendMessage(message.chat, {
+        interactiveMessage: {
+          header: {
+            title: "📢 Channel Link Analysis",
+          },
+          body: {
+            text:
+              `🔗 Link:\n${link}\n\n` +
+              `🆔 Channel ID:\n\`${id}\``,
+          },
+          footer: {
+            text: "Powered By Rabbit Xmd Mini",
+          },
+          buttons: [
+            {
+              name: "cta_copy",
+              buttonParamsJson: JSON.stringify({
+                display_text: "📋 Copy Channel ID",
+                copy_code: id,
+              }),
+            },
+          ],
+        },
+      });
     }
 
     await message.react("❌");
