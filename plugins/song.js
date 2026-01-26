@@ -229,7 +229,7 @@ Module({
   });
 });
 Module({
-  command: "song",
+  command: "songs",
   package: "downloader",
   description: "Download audio from YouTube",
 })(async (message, match) => {
