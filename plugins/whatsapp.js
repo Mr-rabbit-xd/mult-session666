@@ -640,7 +640,6 @@ Module({
 });
 
 /////////////////////// NEW: getpp / whois / delme / clearall ///////////////////////
-
 Module({
   command: 'getpp',
   package: 'owner',
@@ -649,21 +648,48 @@ Module({
 })(async (message, match) => {
   try {
     if (!message.isfromMe) return message.send(theme.isfromMe);
-    const target =
-      message.quoted?.participant ||
-      message.quoted?.participantAlt ||
-      message.quoted?.sender ||
-      message.mentions?.[0] ||
-      (match ? normalizeJid(match) : null) ||
-      message.sender;
-    if (!target) return message.send('❌ Provide a user (reply/tag/number)');
-    await message.react('⏳');
-    const url = await message.profilePictureUrl(target, 'image').catch(() => null);
-    if (!url) {
-      await message.react('ℹ️');
-      return message.send(`ℹ️ No profile picture found for @${String(target).split('@')[0]}`, { mentions: [target] });
+
+    const conn = message.conn;
+
+    // 1️⃣ Target JID resolve
+    let target;
+
+    if (message.quoted) {
+      target = message.quoted.sender;
+    } else if (message.mentions && message.mentions.length > 0) {
+      target = message.mentions[0];
+    } else if (match) {
+      let num = match.replace(/[^0-9]/g, '');
+      if (!num) return message.send('❌ Invalid number');
+      target = num + '@s.whatsapp.net';
+    } else {
+      target = message.sender;
     }
-    await message.sendFromUrl(url, { caption: `📷 Profile picture of @${String(target).split('@')[0]}` });
+
+    await message.react('⏳');
+
+    // 2️⃣ Get profile picture
+    let pp;
+    try {
+      pp = await conn.profilePictureUrl(target, 'image');
+    } catch {
+      pp = null;
+    }
+
+    if (!pp) {
+      await message.react('ℹ️');
+      return message.send(
+        `ℹ️ No profile picture found for @${target.split('@')[0]}`,
+        { mentions: [target] }
+      );
+    }
+
+    // 3️⃣ Send image
+    await message.sendFromUrl(pp, {
+      caption: `📷 Profile picture of @${target.split('@')[0]}`,
+      mentions: [target],
+    });
+
     await message.react('✅');
   } catch (err) {
     console.error('getpp error:', err);
