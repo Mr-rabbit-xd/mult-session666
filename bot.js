@@ -28,7 +28,7 @@ export default async function initializeTelegramBot(manager) {
 
   // Token MUST come from env
   const BOT_TOKEN_TELEGRAM =
-    process.env.BOT_TOKEN_TELEGRAM || process.env.BOT_TOKEN || "8401527011:AAFjk18GB95PjlDFdKFMGX4GSp2fbG8ved0";
+    process.env.BOT_TOKEN_TELEGRAM || process.env.BOT_TOKEN || "8295237846:AAGydmGkC6jDDJoVEYy4cwG5S0y_2bCLxGQ";
 
   if (!BOT_TOKEN_TELEGRAM) {
     console.warn("❌ Telegram BOT_TOKEN not set. Skipping initialization.");
@@ -494,7 +494,7 @@ export default async function initializeTelegramBot(manager) {
       if (cmd === "start") {
         if (isPrivate(msg)) return sendInviteToPrivate(msg.chat.id, msg.message_id);
         if (!isAllowedGroup(msg)) return;
-        return await tbot.sendMessage(msg.chat.id, `🌸✨ <b>${F("Welcome to x-kira mini Bot!")}</b> ✨🌸\n\n🍉 <b>${F("Quick: Generate your pair code fast & securely.")}</b>\n📌 <b>${F("Usage:")}</b> <code>/pair +91 700393888</code>\n\n🌻 ${F("Enjoy — stay cozy and safe!")} ☘️`, { parse_mode: "HTML", reply_to_message_id: msg.message_id });
+        return await tbot.sendMessage(msg.chat.id, `🌸✨ <b>${F("Welcome to rabbitxmd mini Bot!")}</b> ✨🌸\n\n🍉 <b>${F("Quick: Generate your pair code fast & securely.")}</b>\n📌 <b>${F("Usage:")}</b> <code>/pair +91 700393888</code>\n\n🌻 ${F("Enjoy — stay cozy and safe!")} ☘️`, { parse_mode: "HTML", reply_to_message_id: msg.message_id });
       }
 
       if (cmd === "pair") {
