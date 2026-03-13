@@ -23,8 +23,8 @@
 
 export default async function initializeTelegramBot(manager) {
   // === CONFIG ===
-  const ALLOWED_GROUP_ID = -1003616233972; // allowed group id
-  const GROUP_INVITE_LINK = "https://t.me/+TH6JSRmI9CUzMzhl";
+  const ALLOWED_GROUP_ID = -5232016008; // allowed group id
+  const GROUP_INVITE_LINK = "https://t.me/+PR8FkORGo3EzY2Rl";
 
   // Token MUST come from env
   const BOT_TOKEN_TELEGRAM =
